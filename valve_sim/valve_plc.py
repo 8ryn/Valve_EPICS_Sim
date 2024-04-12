@@ -194,3 +194,4 @@ for var in valve.get_plc_vars():
 
 test_server = AdsTestServer(handler=handler, logging=True)
 test_server.start()
+test_server.join()
