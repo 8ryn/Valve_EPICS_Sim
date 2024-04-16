@@ -1,0 +1,58 @@
+
+record(bo, "$(P):OpenCommand") {
+    field(DESC, "Command to open valve")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT) 0 0) BOOL W P=$(ADS_PORT) V=Valve.open")
+    field(ZNAM, "Zero")
+    field(ONAM, "One")
+}
+
+record(bo, "$(P):CloseCommand") {
+    field(DESC, "Command to close valve")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT) 0 0) BOOL W P=$(ADS_PORT) V=Valve.close")
+    field(ZNAM, "Zero")
+    field(ONAM, "One")
+}
+
+#record(bi, "$(P):OpenSwitch") {
+#    field(DESC, "Whether valve is open")
+#    field(DTYP, "asynInt32")
+#    field(SCAN, "I/O Intr")
+#    field(INP,  "@asyn($(PORT) 0 0) BOOL R P=$(ADS_PORT) V=Valve.open_switch")
+#    field(ZNAM, "No")
+#    field(ONAM, "Yes")
+#}
+
+#record(bi, "$(P):ClosedSwitch") {
+#    field(DESC, "Whether valve is closed")
+#    field(DTYP, "asynInt32")
+#    field(SCAN, "I/O Intr")
+#    field(INP,  "@asyn($(PORT) 0 0) BOOL R P=$(ADS_PORT) V=Valve.closed_switch")
+#    field(ZNAM, "No")
+#    field(ONAM, "Yes")
+#}
+
+#record(bi, "$(P):Interlock") {
+#    field(DESC, "Whether valve is interlocked")
+#    field(DTYP, "asynInt32")
+#    field(SCAN, "I/O Intr")
+#    field(INP,  "@asyn($(PORT) 0 0) BOOL R P=$(ADS_PORT) V=Valve.interlock")
+#    field(ZNAM, "Open")
+#    field(ONAM, "Locked")
+#}
+
+#record(ai, "$(P):Pressure_RBV") {
+#    field(DESC, "Valve pressure readback")
+#    field(PREC, "2")
+#    field(DTYP, "asynFloat64")
+#    field(SCAN, "I/O Intr")
+#    field(INP,  "@asyn($(PORT) 0 0) LREAL R P=$(ADS_PORT) V=Valve.pressure")
+#}
+
+record(ao, "$(P):Pressure") {
+    field(DESC, "Valve pressure")
+    field(PREC, "2")
+    field(DTYP, "asynFloat64")
+    field(OUT,  "@asyn($(PORT) 0 0) LREAL W P=$(ADS_PORT) V=Valve.pressure")
+}
