@@ -1,10 +1,28 @@
-
 record(bo, "$(P):OpenCommand") {
     field(DESC, "Command to open valve")
     field(DTYP, "asynInt32")
     field(OUT,  "@asyn($(PORT) 0 0) BOOL W P=$(ADS_PORT) V=Valve.open")
     field(ZNAM, "Zero")
     field(ONAM, "One")
+    field(FLNK, "$(P):SetOpenBusy")
+}
+
+record(calcout, "$(P):SetOpenBusy")
+{
+    field(INPA, "$(P):OpenSwitch NPP") #Doesn't set busy record if already open
+    field(CALC, "!A")
+    field(OOPT, "When Non-zero")
+    field(OUT,  "$(P):OpenBusy PP")
+}
+
+record(busy, "$(P):OpenBusy"){
+}
+
+record(calcout, "$(P):ClearOpenBusy"){
+    field(INPA, "$(P):OpenSwitch CP")
+    field(CALC, "!A")
+    field(OOPT, "Transition To Zero")
+    field(OUT,  "$(P):OpenBusy PP")
 }
 
 record(bo, "$(P):CloseCommand") {
@@ -15,14 +33,14 @@ record(bo, "$(P):CloseCommand") {
     field(ONAM, "One")
 }
 
-#record(bi, "$(P):OpenSwitch") {
-#    field(DESC, "Whether valve is open")
-#    field(DTYP, "asynInt32")
-#    field(SCAN, "I/O Intr")
-#    field(INP,  "@asyn($(PORT) 0 0) BOOL R P=$(ADS_PORT) V=Valve.open_switch")
-#    field(ZNAM, "No")
-#    field(ONAM, "Yes")
-#}
+record(bi, "$(P):OpenSwitch") {
+    field(DESC, "Whether valve is open")
+    field(DTYP, "asynInt32")
+    field(SCAN, "I/O Intr")
+    #field(INP,  "@asyn($(PORT) 0 0) BOOL R P=$(ADS_PORT) V=Valve.open_switch")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+}
 
 #record(bi, "$(P):ClosedSwitch") {
 #    field(DESC, "Whether valve is closed")

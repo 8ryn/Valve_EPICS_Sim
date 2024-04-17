@@ -17,11 +17,11 @@ valve_DBD += base.dbd
 
 # Include dbd files from all support applications:
 #valve_DBD += xxx.dbd
-valve_DBD += asyn.dbd ads.dbd
+valve_DBD += asyn.dbd ads.dbd busySupport.dbd
 
 # Add all the support libraries needed by this IOC
 #valve_LIBS += xxx
-valve_LIBS += asyn ads
+valve_LIBS += asyn ads busy
 
 # valve_registerRecordDeviceDriver.cpp derives from valve.dbd
 valve_SRCS += valve_registerRecordDeviceDriver.cpp

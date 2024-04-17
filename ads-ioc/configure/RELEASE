@@ -25,6 +25,7 @@
 SUPPORT = /home/bar/EPICS/support/
 #MYMODULE = $(MODULES)/my-module
 ASYN = $(SUPPORT)/asyn-R4-43
+BUSY = $(SUPPORT)/busy-R1-7-3
 ADS = $(SUPPORT)/adsDriver
 
 # If using the sequencer, point SNCSEQ at its top directory:
