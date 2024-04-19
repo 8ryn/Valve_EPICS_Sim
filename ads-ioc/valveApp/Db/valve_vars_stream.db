@@ -1,0 +1,120 @@
+record(bo, "$(P):OpenCommand") {
+    field(DESC, "Command to open valve")
+    #field(DTYP, "asynInt32")
+    #field(OUT,  "@asyn($(PORT) 0 0) BOOL W P=$(ADS_PORT) V=Valve.open")
+    field(DTYP, "stream")
+    field(OUT,  "@valve.proto setOpen V1")
+    field(ZNAM, "Zero")
+    field(ONAM, "One")
+    field(FLNK, "$(P):SetOpenBusy")
+}
+
+record(calcout, "$(P):SetOpenBusy")
+{
+    field(INPA, "$(P):OpenSwitch NPP") #Doesn't set busy record if already open
+    field(CALC, "!A")
+    field(OOPT, "When Non-zero")
+    field(OUT,  "$(P):OpenBusy PP")
+}
+
+record(busy, "$(P):OpenBusy"){
+}
+
+record(calcout, "$(P):ClearOpenBusy"){
+    field(INPA, "$(P):OpenSwitch CP")
+    field(CALC, "!A")
+    field(OOPT, "Transition To Zero")
+    field(OUT,  "$(P):OpenBusy PP")
+}
+
+record(bo, "$(P):CloseCommand") {
+    field(DESC, "Command to close valve")
+    #field(DTYP, "asynInt32")
+    #field(OUT,  "@asyn($(PORT) 0 0) BOOL W P=$(ADS_PORT) V=Valve.close")
+    field(DTYP, "stream")
+    field(OUT,  "@valve.proto setClose V1")
+    field(ZNAM, "Zero")
+    field(ONAM, "One")
+    field(FLNK, "$(P):SetCloseBusy")
+}
+
+record(calcout, "$(P):SetCloseBusy")
+{
+    field(INPA, "$(P):ClosedSwitch NPP") #Doesn't set busy record if already closed
+    field(CALC, "!A")
+    field(OOPT, "When Non-zero")
+    field(OUT,  "$(P):CloseBusy PP")
+}
+
+record(busy, "$(P):CloseBusy"){
+}
+
+record(calcout, "$(P):ClearCloseBusy"){
+    field(INPA, "$(P):ClosedSwitch CP")
+    field(CALC, "!A")
+    field(OOPT, "Transition To Zero")
+    field(OUT,  "$(P):CloseBusy PP")
+}
+
+record(bi, "$(P):OpenSwitch") {
+    field(DESC, "Whether valve is open")
+#    field(DTYP, "asynInt32")
+#    field(SCAN, "I/O Intr")
+#    field(INP,  "@asyn($(PORT) 0 0) BOOL R P=$(ADS_PORT) V=Valve.open_switch")
+    field(DTYP, "stream")
+    field(INP,  "@valve.proto getOpenSwitch V1")
+    field(SCAN,".5 second")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+}
+
+record(bi, "$(P):ClosedSwitch") {
+    field(DESC, "Whether valve is closed")
+#    field(DTYP, "asynInt32")
+#    field(SCAN, "I/O Intr")
+#    field(INP,  "@asyn($(PORT) 0 0) BOOL R P=$(ADS_PORT) V=Valve.closed_switch")
+    field(DTYP, "stream")
+    field(INP,  "@valve.proto getClosedSwitch V1")
+    field(SCAN,".5 second")
+    field(ZNAM, "No")
+    field(ONAM, "Yes")
+}
+
+record(bi, "$(P):Interlock") {
+    field(DESC, "Whether valve is interlocked")
+    #field(DTYP, "asynInt32")
+    #field(SCAN, "I/O Intr")
+    #field(INP,  "@asyn($(PORT) 0 0) BOOL R P=$(ADS_PORT) V=Valve.interlock")
+    field(DTYP, "stream")
+    field(INP,  "@valve.proto getInterlock V1")
+    field(SCAN,".5 second")
+    field(ZNAM, "Open")
+    field(ONAM, "Locked")
+}
+
+record(ai, "$(P):Pressure_RBV") {
+    field(DESC, "Valve pressure readback")
+    field(PREC, "2")
+#    field(DTYP, "asynFloat64")
+#    field(SCAN, "I/O Intr")
+#    field(INP,  "@asyn($(PORT) 0 0) LREAL R P=$(ADS_PORT) V=Valve.pressure")
+    field(DTYP, "stream")
+    field(INP,  "@valve.proto getPressure V1")
+    field(SCAN,".5 second")
+}
+
+record(ao, "$(P):Pressure") {
+    field(DESC, "Valve pressure")
+    field(PREC, "2")
+    #field(DTYP, "asynFloat64")
+    #field(OUT,  "@asyn($(PORT) 0 0) LREAL W P=$(ADS_PORT) V=Valve.pressure")
+    field(DTYP, "stream")
+    field(OUT,  "@valve.proto setPressure V1")
+}
+
+record(stringin, "$(P):State") {
+    field(DESC, "Valve state")
+    field(DTYP, "stream")
+    field(INP,  "@valve.proto getState V1")
+    field(SCAN,".5 second")
+}

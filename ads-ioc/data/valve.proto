@@ -1,0 +1,41 @@
+Terminator = LF;
+
+setOpen {
+    out "set open";
+    in "OK"
+}
+
+setClose{
+    out "set close";
+    in "OK"
+}
+
+setPressure{
+    out "set pressure %f";
+    in "OK"
+}
+
+getOpenSwitch {
+    out "get open_switch"; 
+    in "%d";
+}
+
+getClosedSwitch {
+    out "get closed_switch"; 
+    in "%d";
+}
+
+getInterlock {
+    out "get interlock"; 
+    in "%d";
+}
+
+getPressure {
+    out "get pressure"; 
+    in "%f";
+}
+
+getState {
+    out "get state"; 
+    in "%s";
+}

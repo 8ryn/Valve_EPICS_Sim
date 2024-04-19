@@ -1,7 +1,7 @@
 global {PORT="$(PORT)"}
 global {ADS_PORT="PLC_TC3"}
 
-file "valve_vars.db" {
+file "valve_vars_stream.db" {
     pattern { "P" }
         { "$(P)" }
 }

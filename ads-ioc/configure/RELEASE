@@ -27,6 +27,8 @@ SUPPORT = /home/bar/EPICS/support/
 ASYN = $(SUPPORT)/asyn-R4-43
 BUSY = $(SUPPORT)/busy-R1-7-3
 ADS = $(SUPPORT)/adsDriver
+CALC =$(SUPPORT)/calc-R3-7-4
+STREAM= $(SUPPORT)/StreamDevice-2.8.24
 
 # If using the sequencer, point SNCSEQ at its top directory:
 #SNCSEQ = $(MODULES)/seq-ver
