@@ -1,4 +1,5 @@
 import time
+import threading
 import socketserver
 
     
@@ -9,7 +10,7 @@ class Valve:
         self._pressure = 1.0
         self._state = 'closed'
         self._interlock = False
-        self._transition_time = 1
+        self._transition_time = 5
 
     @property
     def open_switch(self):
@@ -44,6 +45,10 @@ class Valve:
         self._state = new_state
 
     def open(self):
+        open_thread = threading.Thread(target=self.__open_threaded)
+        open_thread.start()
+
+    def __open_threaded(self):
         if self._state == 'closed' and not self._interlock:
             self._closed_switch = False
             self._transition('opening')
@@ -54,6 +59,10 @@ class Valve:
             print("Cannot open the valve due to interlock or current state")
 
     def close(self):
+        close_thread = threading.Thread(target=self.__close_threaded)
+        close_thread.start()
+
+    def __close_threaded(self):
         if self._state == 'open' and not self._interlock:
             self._open_switch = False
             self._transition('closing')
@@ -62,7 +71,7 @@ class Valve:
             self._transition('closed')
         else:
             print("Cannot close the valve due to interlock or current state")
-
+   
 
 valve = Valve()
 
@@ -125,6 +134,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
 HOST, PORT = "localhost", 9999
 
+#Old blocking code:
 # Create the server, binding to localhost on port 9999
 with socketserver.TCPServer((HOST, PORT), MyTCPHandler) as server:
     # Activate the server; this will keep running until you

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Saved on 2024-04-25 10:18:31 by bar-->
+<display version="2.0.0">
+  <name>Display</name>
+  <widget type="action_button" version="3.0.0">
+    <name>Open Button</name>
+    <actions>
+      <action type="write_pv">
+        <pv_name>$(P):OpenCommand</pv_name>
+        <value>0</value>
+        <description>WritePV</description>
+      </action>
+    </actions>
+    <text>Open</text>
+    <x>30</x>
+    <y>30</y>
+    <width>120</width>
+    <height>40</height>
+    <background_color>
+      <color name="OK" red="0" green="255" blue="0">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="action_button" version="3.0.0">
+    <name>Close Button</name>
+    <actions>
+      <action type="write_pv">
+        <pv_name>$(P):CloseCommand</pv_name>
+        <value>1</value>
+        <description>WritePV</description>
+      </action>
+    </actions>
+    <text>Close</text>
+    <x>160</x>
+    <y>30</y>
+    <width>120</width>
+    <height>40</height>
+    <foreground_color>
+      <color name="Header_ForeGround" red="255" green="255" blue="255">
+      </color>
+    </foreground_color>
+    <background_color>
+      <color name="STOP" red="255" green="0" blue="0">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="led" version="2.0.0">
+    <name>LED</name>
+    <pv_name>$(P):OpenSwitch</pv_name>
+    <x>70</x>
+    <y>80</y>
+    <width>40</width>
+    <height>40</height>
+  </widget>
+  <widget type="text-symbol" version="2.0.0">
+    <name>Text Symbol</name>
+    <x>970</x>
+    <y>670</y>
+    <width>1</width>
+    <height>1</height>
+  </widget>
+  <widget type="led" version="2.0.0">
+    <name>LED_1</name>
+    <pv_name>$(P):ClosedSwitch</pv_name>
+    <x>200</x>
+    <y>80</y>
+    <width>40</width>
+    <height>40</height>
+  </widget>
+  <widget type="multi_state_led" version="2.0.0">
+    <name>LED (Multi State)</name>
+    <pv_name>$(P):Interlock</pv_name>
+    <x>550</x>
+    <y>30</y>
+    <width>160</width>
+    <height>40</height>
+    <square>true</square>
+    <states>
+      <state>
+        <value>0</value>
+        <label>Open</label>
+        <color>
+          <color name="OK" red="0" green="255" blue="0">
+          </color>
+        </color>
+      </state>
+      <state>
+        <value>1</value>
+        <label>Locked</label>
+        <color>
+          <color name="STOP" red="255" green="0" blue="0">
+          </color>
+        </color>
+      </state>
+    </states>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_1</name>
+    <text>Interlock:</text>
+    <x>420</x>
+    <y>40</y>
+    <width>120</width>
+    <height>30</height>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="24.0">
+      </font>
+    </font>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_2</name>
+    <text>Pressure:</text>
+    <x>20</x>
+    <y>200</y>
+    <width>120</width>
+    <height>30</height>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="24.0">
+      </font>
+    </font>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update</name>
+    <pv_name>$(P):Pressure_RBV</pv_name>
+    <x>260</x>
+    <y>200</y>
+    <width>110</width>
+    <height>30</height>
+  </widget>
+  <widget type="textentry" version="3.0.0">
+    <name>Text Entry</name>
+    <pv_name>$(P):Pressure</pv_name>
+    <x>140</x>
+    <y>200</y>
+    <width>90</width>
+    <height>30</height>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_3</name>
+    <text>State:</text>
+    <x>20</x>
+    <y>250</y>
+    <width>120</width>
+    <height>30</height>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="24.0">
+      </font>
+    </font>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update_1</name>
+    <pv_name>$(P):State</pv_name>
+    <x>140</x>
+    <y>250</y>
+    <width>110</width>
+    <height>30</height>
+  </widget>
+</display>
