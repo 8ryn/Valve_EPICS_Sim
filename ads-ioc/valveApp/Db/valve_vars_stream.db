@@ -118,3 +118,10 @@ record(stringin, "$(P):State") {
     field(INP,  "@valve.proto getState V1")
     field(SCAN,".5 second")
 }
+
+record(mbbiDirect, "$(P):Status") {
+    field(DESC, "16 Bit word describing status of valve")
+    field(DTYP, "stream")
+    field(INP, "@valve.proto getStatus V1")
+    field(SCAN,".5 second")
+}

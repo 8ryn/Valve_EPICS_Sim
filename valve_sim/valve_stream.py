@@ -11,6 +11,7 @@ class Valve:
         self._state = 'closed'
         self._interlock = False
         self._transition_time = 5
+        self._transition_error = False
 
     @property
     def open_switch(self):
@@ -40,6 +41,18 @@ class Valve:
     def state(self):
         return self._state
 
+    def get_status(self):
+        status = 0
+        if self.open_switch:
+            status += 1
+        if self.closed_switch:
+            status += 1 << 1
+        if self._interlock:
+            status += 1 << 2
+        if self._transition_error:
+            status += 1 << 3
+        return status
+
     def _transition(self, new_state):
         print(f"Transitioning from {self._state} to {new_state}")
         self._state = new_state
@@ -50,13 +63,19 @@ class Valve:
 
     def __open_threaded(self):
         if self._state == 'closed' and not self._interlock:
+            self._transition_error = False
             self._closed_switch = False
             self._transition('opening')
             time.sleep(self._transition_time)
             self._open_switch = True
             self._transition('open')
+        elif self._state == 'closed' and self._interlock:
+            print("Cannot open the valve due to interlock")
+            self._transition_error = True
         else:
-            print("Cannot open the valve due to interlock or current state")
+            print("Valve already open")
+
+
 
     def close(self):
         close_thread = threading.Thread(target=self.__close_threaded)
@@ -64,13 +83,17 @@ class Valve:
 
     def __close_threaded(self):
         if self._state == 'open' and not self._interlock:
+            self._transition_error = False
             self._open_switch = False
             self._transition('closing')
             time.sleep(self._transition_time)
             self._closed_switch = True
             self._transition('closed')
+        elif self._state == 'open' and self._interlock:
+            print("Cannot close the valve due to interlock")
+            self._transition_error = True
         else:
-            print("Cannot close the valve due to interlock or current state")
+            print("Valve already closed")
    
 
 valve = Valve()
@@ -104,6 +127,8 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                     reply = valve.pressure
                 case "state":
                     reply = valve.state
+                case "status":
+                    reply = valve.get_status()
                 case _:
                     reply = "Invalid valve property"
         elif args[0] == "set":

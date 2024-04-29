@@ -39,3 +39,8 @@ getState {
     out "get state"; 
     in "%s";
 }
+
+getStatus {
+    out "get status"; 
+    in "%d";
+}
