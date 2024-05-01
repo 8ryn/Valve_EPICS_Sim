@@ -119,6 +119,19 @@ record(stringin, "$(P):State") {
     field(SCAN,".5 second")
 }
 
+record(bi, "$(P):TransitionError") {
+    field(DESC, "Whether valve has been unable to transition ")
+#    field(DTYP, "asynInt32")
+#    field(SCAN, "I/O Intr")
+#    field(INP,  "@asyn($(PORT) 0 0) BOOL R P=$(ADS_PORT) V=Valve.transition_error")
+    field(DTYP, "stream")
+    field(INP,  "@valve.proto getTransitionError V1")
+    field(SCAN,".5 second")
+    field(ZNAM, "No Error")
+    field(ONAM, "Error")
+    field(OSV, "MAJOR")
+}
+
 record(mbbiDirect, "$(P):Status") {
     field(DESC, "16 Bit word describing status of valve")
     field(DTYP, "stream")

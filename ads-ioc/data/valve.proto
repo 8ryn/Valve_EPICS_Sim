@@ -44,3 +44,8 @@ getStatus {
     out "get status"; 
     in "%d";
 }
+
+getTransitionError {
+    out "get transition_error"; 
+    in "%d";
+}

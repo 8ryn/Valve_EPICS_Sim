@@ -40,6 +40,10 @@ class Valve:
     @property
     def state(self):
         return self._state
+    
+    @property
+    def transition_error(self):
+        return self._transition_error
 
     def get_status(self):
         status = 0
@@ -74,7 +78,6 @@ class Valve:
             self._transition_error = True
         else:
             print("Valve already open")
-
 
 
     def close(self):
@@ -129,6 +132,8 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                     reply = valve.state
                 case "status":
                     reply = valve.get_status()
+                case "transition_error":
+                    reply = int(valve.transition_error)
                 case _:
                     reply = "Invalid valve property"
         elif args[0] == "set":

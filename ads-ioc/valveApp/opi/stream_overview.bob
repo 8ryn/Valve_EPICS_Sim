@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Saved on 2024-04-25 10:18:31 by bar-->
+<!--Saved on 2024-05-01 13:31:03 by bar-->
 <display version="2.0.0">
   <name>Display</name>
   <widget type="action_button" version="3.0.0">
@@ -151,6 +151,26 @@
     <pv_name>$(P):State</pv_name>
     <x>140</x>
     <y>250</y>
+    <width>110</width>
+    <height>30</height>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_4</name>
+    <text>Transition error:</text>
+    <x>20</x>
+    <y>290</y>
+    <width>120</width>
+    <height>30</height>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="24.0">
+      </font>
+    </font>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update_2</name>
+    <pv_name>$(P):TransitionError</pv_name>
+    <x>140</x>
+    <y>290</y>
     <width>110</width>
     <height>30</height>
   </widget>
