@@ -1,4 +1,5 @@
 import time
+import threading
 import struct
 import ctypes
 from datetime import datetime
@@ -102,18 +103,21 @@ class Valve:
     def __init__(self):
         #Currently the variables are each implemented as both local variables and PLCVariables, this could be simplified now that this is working
         self._open_switch = False
-        self._open_switch_var = PLCVariable("Valve.open_switch", self._open_switch, ads_type=constants.ADST_BIT, symbol_type="BOOL")
+        self._open_switch_var = PLCVariable("Valve.open_switch", self._open_switch, ads_type=constants.ADST_BIT, symbol_type="BOOL", index_group=61445, index_offset=10000)
         self._closed_switch = True
-        self._closed_switch_var = PLCVariable("Valve.closed_switch", self._closed_switch, ads_type=constants.ADST_BIT, symbol_type="BOOL")
+        self._closed_switch_var = PLCVariable("Valve.closed_switch", self._closed_switch, ads_type=constants.ADST_BIT, symbol_type="BOOL", index_group=61445, index_offset=10001)
         self._pressure = 1.0
-        self._pressure_var = ValvePLCVariable("Valve.pressure", self._pressure, ads_type=constants.ADST_REAL64, symbol_type="LREAL", valve=self, customSetter=pressure_set)
+        self._pressure_var = ValvePLCVariable("Valve.pressure", self._pressure, ads_type=constants.ADST_REAL64, symbol_type="LREAL", valve=self, customSetter=pressure_set, index_group=61445, index_offset=10002)
         self._interlock = False
-        self._interlock_var = PLCVariable("Valve.interlock", self._interlock, ads_type=constants.ADST_BIT, symbol_type="BOOL")
+        self._interlock_var = PLCVariable("Valve.interlock", self._interlock, ads_type=constants.ADST_BIT, symbol_type="BOOL", index_group=61445, index_offset=10003)
         self._state = 'closed'
-        self._state_var = PLCVariable("Valve.state", self._state.encode('utf-8'), ads_type=constants.ADST_STRING, symbol_type="STRING")
+        self._state_var = PLCVariable("Valve.state", self._state.encode('utf-8'), ads_type=constants.ADST_STRING, symbol_type="STRING", index_group=61445, index_offset=10004)
         self._transition_time = 1.0
-        self.open_command_var = ValvePLCVariable("Valve.open", 0, ads_type=constants.ADST_BIT, symbol_type="BOOL", valve=self, customSetter=open_set)
-        self.close_command_var = ValvePLCVariable("Valve.close", 0, ads_type=constants.ADST_BIT, symbol_type="BOOL", valve=self, customSetter=close_set)
+        self.open_command_var = ValvePLCVariable("Valve.open", 0, ads_type=constants.ADST_BIT, symbol_type="BOOL", valve=self, customSetter=open_set, index_group=61445, index_offset=10005)
+        self.close_command_var = ValvePLCVariable("Valve.close", 0, ads_type=constants.ADST_BIT, symbol_type="BOOL", valve=self, customSetter=close_set, index_group=61445, index_offset=10006)
+        self._transition_error = False
+        self._transition_error_var = PLCVariable("Valve.transition_error", self._transition_error, ads_type=constants.ADST_BIT, symbol_type="BOOL", index_group=61445, index_offset=10007)
+        self._status_var = PLCVariable("Valve.status", 2, ads_type=constants.ADST_UINT16, symbol_type="UINT", index_group=61445, index_offset=10008)
 
     @property
     def open_switch(self):
@@ -137,6 +141,7 @@ class Valve:
         else:
             self._interlock = False
             self.set_plc_var(self._interlock_var, False)
+        self.__status_update()
 
     @property
     def interlock(self):
@@ -145,12 +150,24 @@ class Valve:
     @property
     def state(self):
         return self._state
-    
+
+    def __status_update(self):
+        status = 0
+        if self.open_switch:
+            status += 1
+        if self.closed_switch:
+            status += 1 << 1
+        if self._interlock:
+            status += 1 << 2
+        if self._transition_error:
+            status += 1 << 3
+        self.set_plc_var(self._status_var, status)
+
     def set_plc_var(self, var: PLCVariable, value):
         var.value = mapToBytes(value, var.ads_type)
 
     def get_plc_vars(self):
-        return [self._open_switch_var, self._closed_switch_var, self._pressure_var, self._interlock_var, self._state_var, self.open_command_var, self.close_command_var]
+        return [self._open_switch_var, self._closed_switch_var, self._pressure_var, self._interlock_var, self._state_var, self.open_command_var, self.close_command_var, self._transition_error_var, self._status_var]
 
     def _transition(self, new_state):
         print(f"Transitioning from {self._state} to {new_state}")
@@ -158,30 +175,54 @@ class Valve:
         self.set_plc_var(self._state_var, new_state)
 
     def open(self):
+        open_thread = threading.Thread(target=self.__open_threaded)
+        open_thread.start()
+
+    def __open_threaded(self):
         if self._state == 'closed' and not self._interlock:
+            self._transition_error = False
             self._closed_switch = False
             self.set_plc_var(self._closed_switch_var, False)
+            self.set_plc_var(self._transition_error_var, False)
+            self.__status_update()
             self._transition('opening')
             time.sleep(self._transition_time)
             self._open_switch = True
             self.set_plc_var(self._open_switch_var, True)
             self._transition('open')
+        elif self._state == 'closed' and self._interlock:
+            print("Cannot open the valve due to interlock")
+            self._transition_error = True
+            self.set_plc_var(self._transition_error_var, True)
         else:
-            print("Cannot open the valve due to interlock or current state")
+            print("Valve already open")
+        self.__status_update()
 
     def close(self):
+        close_thread = threading.Thread(target=self.__close_threaded)
+        close_thread.start()
+
+    def __close_threaded(self):
         if self._state == 'open' and not self._interlock:
             self._open_switch = False
+            self._transition_error = False
             self._open_switch_var.value = False
             self.set_plc_var(self._open_switch_var, False)
+            self.set_plc_var(self._transition_error_var, False)
+            self.__status_update()
             self._transition('closing')
             time.sleep(self._transition_time)
             self._closed_switch = True
             self._closed_switch_var.value = True
             self.set_plc_var(self._closed_switch_var, True)
             self._transition('closed')
+        elif self._state == 'open' and self._interlock:
+            print("Cannot close the valve due to interlock")
+            self._transition_error = True
+            self.set_plc_var(self._transition_error_var, True)
         else:
-            print("Cannot close the valve due to interlock or current state")
+            print("Valve already closed")
+        self.__status_update()
 
 
 handler = AdvancedHandler()
