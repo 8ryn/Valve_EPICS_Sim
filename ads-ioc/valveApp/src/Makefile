@@ -18,10 +18,12 @@ valve_DBD += base.dbd
 # Include dbd files from all support applications:
 #valve_DBD += xxx.dbd
 valve_DBD += asyn.dbd ads.dbd busySupport.dbd calcSupport.dbd stream.dbd drvAsynIPPort.dbd
+valve_DBD += pvxsIoc.dbd
 
 # Add all the support libraries needed by this IOC
 #valve_LIBS += xxx
 valve_LIBS += asyn ads busy calc stream
+valve_LIBS += pvxsIoc pvxs
 
 # valve_registerRecordDeviceDriver.cpp derives from valve.dbd
 valve_SRCS += valve_registerRecordDeviceDriver.cpp
