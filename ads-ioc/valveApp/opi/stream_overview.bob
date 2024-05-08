@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Saved on 2024-05-01 13:31:03 by bar-->
+<!--Saved on 2024-05-08 10:34:39 by bar-->
 <display version="2.0.0">
   <name>Display</name>
   <widget type="action_button" version="3.0.0">
@@ -173,5 +173,26 @@
     <y>290</y>
     <width>110</width>
     <height>30</height>
+  </widget>
+  <widget type="byte_monitor" version="2.0.0">
+    <name>Byte Monitor</name>
+    <pv_name>$(P):Status</pv_name>
+    <x>140</x>
+    <y>330</y>
+    <height>40</height>
+    <numBits>4</numBits>
+    <bitReverse>true</bitReverse>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_5</name>
+    <text>Status bits:</text>
+    <x>20</x>
+    <y>330</y>
+    <width>120</width>
+    <height>30</height>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="24.0">
+      </font>
+    </font>
   </widget>
 </display>
