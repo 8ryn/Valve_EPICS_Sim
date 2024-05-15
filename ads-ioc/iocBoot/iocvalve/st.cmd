@@ -41,5 +41,13 @@ asynSetTraceMask("$(PORT_VALVEDEMO)", 0, 0x21)
 # Alternatively, output everything
 #asynSetTraceMask("$(PORT_VALVEDEMO)", 0, 0xff)
 
+set_savefile_path("$(TOP)/iocBoot/autosave") 
+set_requestfile_path("$(TOP)/valveApp/Db", "")
+
+set_pass1_restoreFile("valve.sav")
+
 cd "${TOP}/iocBoot/${IOC}"
 iocInit
+
+# save backed up PVs every five seconds
+create_monitor_set("valve.req",5,"P=$(PREFIX_VALVEDEMO)")

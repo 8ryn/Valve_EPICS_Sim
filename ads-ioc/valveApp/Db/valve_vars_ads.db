@@ -15,7 +15,7 @@ record(calcout, "$(P):SetOpenBusy")
     field(OUT,  "$(P):OpenBusy PP")
 }
 
-record(busy, "$(P):OpenBusy"){
+record(busy, "$(P):OpenBusy"){   
 }
 
 record(calcout, "$(P):ClearOpenBusy"){
@@ -58,6 +58,7 @@ record(bi, "$(P):OpenSwitch") {
     field(INP,  "@asyn($(PORT) 0 0) BOOL R P=$(ADS_PORT) V=Valve.open_switch")
     field(ZNAM, "No")
     field(ONAM, "Yes")
+    field(FLNK, "$(P):CounterIncrementer")
 }
 
 record(bi, "$(P):ClosedSwitch") {
@@ -108,11 +109,26 @@ record(mbbiDirect, "$(P):Status") {
 }
 
 record(bi, "$(P):TransitionError") {
-    field(DESC, "Whether valve has been unable to transition ")
+    field(DESC, "Valve has been unable to transition")
     field(DTYP, "asynInt32")
     field(SCAN, "I/O Intr")
     field(INP,  "@asyn($(PORT) 0 0) BOOL R P=$(ADS_PORT) V=Valve.transition_error")
     field(ZNAM, "No Error")
     field(ONAM, "Error")
     field(OSV, "MAJOR")
+}
+
+record(calc, "$(P):CycleCounter") {
+    field(DESC, "Increments each time valve opens")
+    field(SCAN, "Passive")
+    field(CALC, "A+1")
+    field(INPA, "$(P):CycleCounter NPP")
+    field(PINI, "NO")
+}
+
+record(calcout, "$(P):CounterIncrementer"){
+    field(INPA, "$(P):OpenSwitch PP")
+    field(CALC, "!A")
+    field(OOPT, "Transition To Zero")
+    field(OUT,  "$(P):CycleCounter.PROC PP")
 }
