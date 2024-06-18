@@ -130,5 +130,54 @@ record(calcout, "$(P):CounterIncrementer"){
     field(INPA, "$(P):OpenSwitch PP")
     field(CALC, "!A")
     field(OOPT, "Transition To Zero")
-    field(OUT,  "$(P):CycleCounter.PROC PP")
+record(fanout, "$(P):OpenFan") {
+  field(FLNK, "$(P):CounterIncrementer")
+  field(LNK0, "$(P):DetectValveOpen")
+  field(LNK1, "$(P):DetectValveClose")
 }
+
+record(calcout, "$(P):DetectValveOpen") {
+  field(CALC, "A")
+  field(INPA, "$(P):OpenSwitch PP")
+  field(OUT, "$(P):OpenTimestamp.PROC PP")
+  field(OOPT, "Transition To Non-zero")
+}
+
+
+record(calcout, "$(P):DetectValveClose") {
+  field(CALC, "A")
+  field(INPA, "$(P):OpenSwitch PP")
+  field(OUT, "$(P):CloseTimestamp.PROC PP")
+  field(OOPT, "Transition To Zero")
+}
+
+record(ai, "$(P):OpenTimestamp") {
+  field(DESC, "Timestamp when valve was opened")
+  field(TSEL, "$(P):OpenSwitch.TIME")
+  field(DTYP, "Soft Timestamp")
+  field(PREC, "0")
+  field(EGU, "s")
+}
+
+
+record(ai, "$(P):CloseTimestamp") {
+  field(DESC, "Timestamp when valve was closed")
+  field(TSEL, "$(P):OpenSwitch.TIME")
+  field(DTYP, "Soft Timestamp")
+  field(FLNK, "$(P):OpenTime")
+  field(PREC, "0")
+  field(EGU, "s")
+}
+
+record(calcout, "$(P):OpenTime") {
+  field(CALC, "B-A")
+  field(INPA, "$(P):OpenTimestamp")
+  field(INPB, "$(P):CloseTimestamp")
+  field(OUT, "$(P):OpenTimeTotal.B PP")
+}
+
+record(calcout, "$(P):OpenTimeTotal") {
+  field(CALC, "B+A")
+  field(INPA, "$(P):OpenTimeTotal")
+}
+
